@@ -808,6 +808,27 @@ main {
 /*-----------------------------------*\
   #RESUME
 \*-----------------------------------*/
+.profiles {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 30px;
+}
+
+.profiles > .name {
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  text-align: center;
+  display: flex;
+  color: var(--white-1);
+  background-color: var(--onyx);
+}
+
+.profiles > * {
+  border-radius: 50%;
+  width: 25%;
+  box-shadow: var(--shadow-2);
+}
 
 .article-title {
   margin-bottom: 30px;
@@ -1977,6 +1998,16 @@ textarea.form-input::-webkit-resizer {
 
   .clients-item {
     min-width: calc(25% - 38px);
+  }
+
+  /* service */
+
+  /**
+   * ME
+   */
+
+  .profiles > .name {
+    font-size: xx-large;
   }
 
   /**
