@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: deploy website
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -17,14 +18,15 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-            az storage blob upload-batch --account-name stnautilusitprod --auth-mode key -d '$web' -s .
+            az storage blob upload-batch --account-name stnautilusitprod --auth-mode key -d '$web' -s . --overwrite true
+      
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
       with:
         inlineScript: |
-           az cdn endpoint purge --content-paths  "/*" --profile-name "cdnp-nautilusit-prod" --name "cdne-nautilusit-prod.azureedge.net" --resource-group "rg-nautiliusit-prod"
+           az cdn endpoint purge --content-paths  "/*" --profile-name "cdnp-nautilusit-prod" --name "cdne-nautilusit-prod.azureedge.net" --resource-group "rg-nautilusit-prod"
 
-    - name: logout
+    - name: Logout
       run: |
             az logout
       if: always()

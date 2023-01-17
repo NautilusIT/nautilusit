@@ -495,7 +495,7 @@ main {
 
 .navbar-link {
   color: var(--light-gray);
-  font-size: var(--fs-8);
+  font-size: var(--fs-6);
   padding: 20px 7px;
   transition: color var(--transition-1);
 }
@@ -1597,10 +1597,10 @@ textarea.form-input::-webkit-resizer {
   .navbar-list {
     gap: 20px;
   }
-
+  /* 
   .navbar-link {
-    --fs-8: 14px;
-  }
+    --fs-6: 14px;
+  } */
 
   /**
    * #ABOUT
@@ -1827,10 +1827,10 @@ textarea.form-input::-webkit-resizer {
   /**
    * NAVBAR
    */
-
+  /* 
   .navbar-link {
-    --fs-8: 15px;
-  }
+    --fs-6: 15px;
+  } */
 
   /**
    * ABOUT
