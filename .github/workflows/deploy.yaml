@@ -27,12 +27,27 @@ jobs:
       with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Stage site
+      run: |
+        mkdir -p dist
+        cp index.html robots.txt sitemap.xml dist/
+        cp -r assets dist/
+
     - name: Upload to blob storage
       uses: azure/CLI@v2
       with:
         inlineScript: |
-            az storage blob upload-batch --account-name stnautilusitprod --auth-mode key -d '$web' -s . --overwrite true
-      
+          # Upload the staged site (only public-facing files)
+          az storage blob upload-batch --account-name stnautilusitprod --auth-mode key -d '$web' -s dist --overwrite true
+          # Remove stale artifacts uploaded by earlier full-repo deploys.
+          # delete-batch is idempotent — a no-op once the blobs are gone.
+          az storage blob delete-batch --account-name stnautilusitprod --auth-mode key -s '$web' --pattern 'README.md' || true
+          az storage blob delete-batch --account-name stnautilusitprod --auth-mode key -s '$web' --pattern '.gitignore' || true
+          az storage blob delete-batch --account-name stnautilusitprod --auth-mode key -s '$web' --pattern '.github/*' || true
+          az storage blob delete-batch --account-name stnautilusitprod --auth-mode key -s '$web' --pattern '.vscode/*' || true
+          az storage blob delete-batch --account-name stnautilusitprod --auth-mode key -s '$web' --pattern '.git/*' || true
+
+
     - name: Purge Cloudflare cache
       run: |
         curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
