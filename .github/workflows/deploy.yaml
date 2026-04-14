@@ -4,18 +4,31 @@ on:
     push:
         branches: [ main ]
 
+# TODO: migrate to OIDC federated credentials to remove the long-lived AZURE_CREDENTIALS secret.
+# Steps:
+#   1. In Entra ID, add a federated credential on the deploy service principal scoped to
+#      `repo:jonnekleijer/nautilusit:ref:refs/heads/main`.
+#   2. Add repo secrets: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID.
+#   3. Add at workflow level:
+#        permissions:
+#          id-token: write
+#          contents: read
+#   4. Replace the `azure/login` step with client-id/tenant-id/subscription-id inputs.
+#   5. Switch the upload step to `--auth-mode login` (requires RBAC on the storage account)
+#      and disable shared-key access on stnautilusitprod once verified.
+
 jobs:
   build:
     name: deploy website
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: azure/login@v1
+    - uses: actions/checkout@v4
+    - uses: azure/login@v2
       with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Upload to blob storage
-      uses: azure/CLI@v1
+      uses: azure/CLI@v2
       with:
         inlineScript: |
             az storage blob upload-batch --account-name stnautilusitprod --auth-mode key -d '$web' -s . --overwrite true
