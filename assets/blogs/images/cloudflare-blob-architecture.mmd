@@ -1,0 +1,22 @@
+flowchart LR
+    U["👤 User"]
+    CF["Cloudflare<br/>CDN · TLS · cache · DDoS"]
+    W["Worker<br/>nautilusit-proxy<br/><i>rewrites Host header</i>"]
+    B["Azure Blob Storage<br/>stnautilusitprod / $web"]
+
+    U -->|"https://nautilusit.nl"| CF
+    CF -->|"route: nautilusit.nl/*"| W
+    W -->|"Host: stnautilusitprod.z6.web.core.windows.net"| B
+    B -->|"200 OK · static content"| W
+    W --> CF
+    CF --> U
+
+    classDef user fill:#1e293b,stroke:#334155,color:#f1f5f9;
+    classDef edge fill:#f38020,stroke:#c96a10,color:#ffffff;
+    classDef worker fill:#fbbf24,stroke:#b45309,color:#1f2937;
+    classDef azure fill:#0078d4,stroke:#005a9e,color:#ffffff;
+
+    class U user;
+    class CF edge;
+    class W worker;
+    class B azure;

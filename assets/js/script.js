@@ -141,10 +141,23 @@ const getArticleFunc = function (article) {
     .then((text) => {
       marked.setOptions({
         highlight: function (code, lang) {
-          return hljs.highlight(code, {
-            language: lang,
-            ignoreIllegals: true,
-          }).value;
+          // Defence in depth: hljs's "common" bundle registers some languages as
+          // aliases without shipping the grammar (e.g. http in 11.7.0), so even
+          // after a getLanguage check, hljs.highlight can still throw. Fall back
+          // to highlightAuto on any failure so a bad fence never blanks the post.
+          try {
+            if (lang && hljs.getLanguage(lang)) {
+              return hljs.highlight(code, {
+                language: lang,
+                ignoreIllegals: true,
+              }).value;
+            }
+          } catch (_) { /* fall through */ }
+          try {
+            return hljs.highlightAuto(code).value;
+          } catch (_) {
+            return code;
+          }
         },
       });
       document.getElementById("blog-post-detail").innerHTML = marked.marked(text);
